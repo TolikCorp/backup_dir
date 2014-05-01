@@ -16,11 +16,16 @@
     fi
     backup_source_list="${backup_source_location}/source.list"
     backup_target_list="${backup_target_location}/target.list"
-    backup_title=`echo ${backup_target_location} | tr '/' '-'`
+    backup_title=`echo -n ${backup_source_location} | sed 's|.*/||';echo -n _;echo ${backup_target_location} | sed 's|.*/||';`
     pids_list="$(ps ax | grep SCREEN | grep -v grep | grep ${backup_title}_backup | awk '{print $1}')"
     if [ -n "${pids_list}" ]; then
-        echo "[---] Внимание: Найдено незавершенное резервирование данных. Завершение..."
+        echo -n "[---] Внимание: Найдено незавершенное резервирование данных. Завершение..."
         kill -9 ${pids_list}
+        if [ "$?" -eq 0 ]; then
+            echo " OK"
+        else
+            echo " FAIL ($?)"
+        fi
         screen -wipe > /dev/null 2>&1
     fi
     if [[ "${backup_source_location}" == "${backup_target_location}" ]]; then
@@ -37,22 +42,42 @@
     fi
     cd ${backup_source_location}
     if [ -f "${backup_source_list}" ]; then
-        echo "[---] Внимание: Найден временный файл от предыдущего резервирования данных (${backup_source_list}). Удаление..."
+        echo -n "[---] Внимание: Найден временный файл от предыдущего резервирования данных (${backup_source_list}). Удаление..."
         rm ${backup_source_list}
+        if [ "$?" -eq 0 ]; then
+            echo " OK"
+        else
+            echo " FAIL ($?)"
+        fi
     fi
     if [ -f "${backup_target_list}" ]; then
-        echo "[---] Внимание: Найден временный файл от предыдущего резервирования данных (${backup_target_list}). Удаление..."
+        echo -n "[---] Внимание: Найден временный файл от предыдущего резервирования данных (${backup_target_list}). Удаление..."
         rm ${backup_target_list}
+        if [ "$?" -eq 0 ]; then
+            echo " OK"
+        else
+            echo " FAIL ($?)"
+        fi
     fi
     find . -type f -print | sed -e 's/^.\{1\}//' > ${backup_source_list}
     find ${backup_target_location} -type f -print > ${backup_target_list}
     if [ -f "${backup_target_list}.backup.part1" ]; then
-        echo "[---] Внимание: Найден временный файл от предыдущего резервирования данных (${backup_target_list}.backup.part1). Удаление..."
+        echo -n "[---] Внимание: Найден временный файл от предыдущего резервирования данных (${backup_target_list}.backup.part1). Удаление..."
         rm ${backup_target_list}.backup.part1
+        if [ "$?" -eq 0 ]; then
+            echo " OK"
+        else
+            echo " FAIL ($?)"
+        fi
     fi
     if [ -f "${backup_target_list}.backup.part2" ]; then
-        echo "[---] Внимание: Найден временный файл от предыдущего резервирования данных (${backup_target_list}.backup.part2). Удаление..."
+        echo -n "[---] Внимание: Найден временный файл от предыдущего резервирования данных (${backup_target_list}.backup.part2). Удаление..."
         rm ${backup_target_list}.backup.part2
+        if [ "$?" -eq 0 ]; then
+            echo " OK"
+        else
+            echo " FAIL ($?)"
+        fi
     fi
     cp ${backup_target_list} ${backup_target_list}.backup.part1
     index="0"
@@ -91,8 +116,13 @@
     fi
     echo "[---] Обработка файлов завершена. Подготовка к резервации данных..."
     if [ -f "${backup_target_list}" ]; then
-        echo "[---] Внимание: Найден временный файл от резервирования данных (${backup_target_list}). Удаление..."
+        echo -n "[---] Внимание: Найден временный файл от резервирования данных (${backup_target_list}). Удаление..."
         rm ${backup_target_list}
+        if [ "$?" -eq 0 ]; then
+            echo " OK"
+        else
+            echo " FAIL ($?)"
+        fi
     fi
     cp ${backup_target_file} ${backup_target_list}
     if [ "$?" -eq 0 ]; then
@@ -102,13 +132,31 @@
         exit 1
     fi
     if [ -f "${backup_target_list}.backup.part1" ]; then
-        echo "[---] Внимание: Найден временный файл от резервирования данных (${backup_target_list}.backup.part1). Удаление..."
+        echo -n "[---] Внимание: Найден временный файл от резервирования данных (${backup_target_list}.backup.part1). Удаление..."
         rm ${backup_target_list}.backup.part1
+        if [ "$?" -eq 0 ]; then
+            echo " OK"
+        else
+            echo " FAIL ($?)"
+        fi
     fi
     if [ -f "${backup_target_list}.backup.part2" ]; then
-        echo "[---] Внимание: Найден временный файл от резервирования данных (${backup_target_list}.backup.part2). Удаление..."
+        echo -n "[---] Внимание: Найден временный файл от резервирования данных (${backup_target_list}.backup.part2). Удаление..."
         rm ${backup_target_list}.backup.part2
+        if [ "$?" -eq 0 ]; then
+            echo " OK"
+        else
+            echo " FAIL ($?)"
+        fi
     fi
-    echo "[---] Подготовка к резервации данных завершена. Процесс резервации данных будет запущен в окне (${backup_title}_backup). Запуск..."
-    screen -AmdS ${backup_title}_backup tar -zcf ${backup_backup_target_location}/$(date +%F)${backup_title}.backup.tar.gz --files-from ${backup_target_list}
-    echo "[---] Для просмотра процесса резервации данных введите: screen -r $(screen -list | grep ${backup_title}_backup | cut -f1 -d'.' | sed 's/\W//g')"
+    echo -n "[---] Подготовка к резервации данных завершена. Процесс резервации данных будет запущен в окне (${backup_title}_backup). Запуск..."
+    screen -AmdS ${backup_title}_backup tar -zcf ${backup_backup_target_location}/$(date +%F)_${backup_title}.backup.tar.gz --files-from ${backup_target_list}
+    if [ "$?" -eq 0 ]; then
+        echo " OK"
+    else
+        echo " FAIL ($?)"
+    fi
+    backup_tar_screen_pid=`screen -list | grep ${backup_title}_backup | cut -f1 -d'.' | sed 's/\W//g'`
+    if [ -n "${backup_tar_screen_pid}" ]; then
+        echo "[---] Для просмотра процесса резервации данных введите: screen -r ${backup_tar_screen_pid}"
+    fi
