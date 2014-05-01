@@ -1,7 +1,4 @@
 #!/bin/bash
-    backup_source_location="${1}"
-    backup_target_location="${2}"
-    backup_backup_target_location="${3}"
     if [ -z ${1} ]; then
         echo "[---] Ошибка: Первый аргумент - это каталог-дистрибутив."
         exit 1
@@ -12,6 +9,33 @@
     fi
     if [ -z ${3} ]; then
         echo "[---] Ошибка: Третий аргумент - это каталог-backup."
+        exit 1
+    fi
+    if [[ "$(echo ${1} | tail -c 2)" == "/" ]]; then
+        backup_source_location="$(echo ${1} | rev | cut -b 2- | rev)"
+    else
+        backup_source_location="${1}"
+    fi
+    if [[ "$(echo ${2} | tail -c 2)" == "/" ]]; then
+        backup_target_location="$(echo ${2} | rev | cut -b 2- | rev)"
+    else
+        backup_target_location="${2}"
+    fi
+    if [[ "$(echo ${3} | tail -c 2)" == "/" ]]; then
+        backup_backup_target_location="$(echo ${3} | rev | cut -b 2- | rev)"
+    else
+        backup_backup_target_location="${3}"
+    fi
+    if [[ ! -d "${backup_source_location}" ]]; then
+        echo "[---] Ошибка: ${backup_source_location} - это не каталог"
+        exit 1
+    fi
+    if [[ ! -d "${backup_target_location}" ]]; then
+        echo "[---] Ошибка: ${backup_target_location} - это не каталог"
+        exit 1
+    fi
+    if [[ ! -d "${backup_backup_target_location}" ]]; then
+        echo "[---] Ошибка: ${backup_backup_target_location} - это не каталог"
         exit 1
     fi
     backup_source_list="${backup_source_location}/source.list"
