@@ -12,17 +12,17 @@
         exit 1
     fi
     if [[ "$(echo ${1} | tail -c 2)" == "/" ]]; then
-        backup_source_location="$(echo ${1} | rev | cut -b 2- | rev)"
+        backup_source_location="$(echo ${1} | sed s'/.$//')"
     else
         backup_source_location="${1}"
     fi
     if [[ "$(echo ${2} | tail -c 2)" == "/" ]]; then
-        backup_target_location="$(echo ${2} | rev | cut -b 2- | rev)"
+        backup_target_location="$(echo ${2} | sed s'/.$//')"
     else
         backup_target_location="${2}"
     fi
     if [[ "$(echo ${3} | tail -c 2)" == "/" ]]; then
-        backup_backup_target_location="$(echo ${3} | rev | cut -b 2- | rev)"
+        backup_backup_target_location="$(echo ${3} | sed s'/.$//')"
     else
         backup_backup_target_location="${3}"
     fi
