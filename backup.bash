@@ -83,8 +83,20 @@
             echo " FAIL ($?)"
         fi
     fi
+    echo -n "[---] Подготовка списка файлов (${backup_source_list})..."
     find . -type f -print | sed -e 's/^.\{1\}//' > ${backup_source_list}
+    if [ "$?" -eq 0 ]; then
+        echo " OK"
+        else
+        echo " FAIL ($?)"
+    fi
+    echo -n "[---] Подготовка списка файлов (${backup_target_list})..."
     find ${backup_target_location} -type f -print > ${backup_target_list}
+    if [ "$?" -eq 0 ]; then
+        echo " OK"
+    else
+        echo " FAIL ($?)"
+    fi
     if [ -f "${backup_target_list}.backup.part1" ]; then
         echo -n "[---] Внимание: Найден временный файл от предыдущего резервирования данных (${backup_target_list}.backup.part1). Удаление..."
         rm ${backup_target_list}.backup.part1
