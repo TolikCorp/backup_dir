@@ -38,7 +38,7 @@
         echo "[---] Ошибка: ${backup_backup_target_location} - это не каталог"
         exit 1
     fi
-    backup_source_list="${backup_source_location}/source.list"
+    backup_source_list="${backup_target_location}/source.list"
     backup_target_list="${backup_target_location}/target.list"
     backup_title=`echo -n ${backup_source_location} | sed 's|.*/||';echo -n _;echo ${backup_target_location} | sed 's|.*/||';`
     pids_list="$(ps ax | grep SCREEN | grep -v grep | grep ${backup_title}_backup | awk '{print $1}')"
@@ -137,7 +137,7 @@
             echo "${i} не существует"
         fi
     done
-    backup_temp_list=".backup.tar.gz .backup.part1 .backup.part2"
+    backup_temp_list=".backup.tar.gz .backup.part1 .backup.part2 source.list"
     for i in ${backup_temp_list}; do
         if [ "${index}" -eq "0" ]; then
             grep -v ${i} ${backup_target_list}.backup.part1 > ${backup_target_list}.backup.part2
