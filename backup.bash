@@ -67,7 +67,7 @@
     cd ${backup_source_location}
     if [ -f "${backup_source_list}" ]; then
         echo -n "[---] Внимание: Найден временный файл от предыдущего резервирования данных (${backup_source_list}). Удаление..."
-        rm ${backup_source_list}
+        rm -- "${backup_source_list}"
         if [ "$?" -eq 0 ]; then
             echo " OK"
         else
@@ -76,7 +76,7 @@
     fi
     if [ -f "${backup_target_list}" ]; then
         echo -n "[---] Внимание: Найден временный файл от предыдущего резервирования данных (${backup_target_list}). Удаление..."
-        rm ${backup_target_list}
+        rm -- "${backup_target_list}"
         if [ "$?" -eq 0 ]; then
             echo " OK"
         else
@@ -101,7 +101,7 @@
     fi
     if [ -f "${backup_target_list}.backup.part1" ]; then
         echo -n "[---] Внимание: Найден временный файл от предыдущего резервирования данных (${backup_target_list}.backup.part1). Удаление..."
-        rm ${backup_target_list}.backup.part1
+        rm -- "${backup_target_list}.backup.part1"
         if [ "$?" -eq 0 ]; then
             echo " OK"
         else
@@ -110,14 +110,14 @@
     fi
     if [ -f "${backup_target_list}.backup.part2" ]; then
         echo -n "[---] Внимание: Найден временный файл от предыдущего резервирования данных (${backup_target_list}.backup.part2). Удаление..."
-        rm ${backup_target_list}.backup.part2
+        rm -- "${backup_target_list}.backup.part2"
         if [ "$?" -eq 0 ]; then
             echo " OK"
         else
             echo " FAIL ($?)"
         fi
     fi
-    cp ${backup_target_list} ${backup_target_list}.backup.part1
+    cp -- "${backup_target_list}" "${backup_target_list}.backup.part1"
     index="0"
     for i in $(grep -v ^# $backup_source_list); do
         if [ -f "${backup_target_location}${i}" ]; then
@@ -155,14 +155,14 @@
     echo "[---] Обработка файлов завершена. Подготовка к резервации данных..."
     if [ -f "${backup_target_list}" ]; then
         echo -n "[---] Внимание: Найден временный файл от резервирования данных (${backup_target_list}). Удаление..."
-        rm ${backup_target_list}
+        rm -- "${backup_target_list}"
         if [ "$?" -eq 0 ]; then
             echo " OK"
         else
             echo " FAIL ($?)"
         fi
     fi
-    cp ${backup_target_file} ${backup_target_list}
+    cp -- "${backup_target_file}" "${backup_target_list}"
     if [ "$?" -eq 0 ]; then
         echo "[---] Лист файлов для резервирования (${backup_target_list}) подготовлен."
     else
@@ -171,7 +171,7 @@
     fi
     if [ -f "${backup_target_list}.backup.part1" ]; then
         echo -n "[---] Внимание: Найден временный файл от резервирования данных (${backup_target_list}.backup.part1). Удаление..."
-        rm ${backup_target_list}.backup.part1
+        rm -- "${backup_target_list}.backup.part1"
         if [ "$?" -eq 0 ]; then
             echo " OK"
         else
@@ -180,7 +180,7 @@
     fi
     if [ -f "${backup_target_list}.backup.part2" ]; then
         echo -n "[---] Внимание: Найден временный файл от резервирования данных (${backup_target_list}.backup.part2). Удаление..."
-        rm ${backup_target_list}.backup.part2
+        rm -- "${backup_target_list}.backup.part2"
         if [ "$?" -eq 0 ]; then
             echo " OK"
         else
@@ -189,7 +189,7 @@
     fi
     if [ -f "${backup_source_list}" ]; then
         echo -n "[---] Внимание: Найден временный файл от резервирования данных (${backup_source_list}). Удаление..."
-        rm ${backup_source_list}
+        rm -- "${backup_source_list}"
         if [ "$?" -eq 0 ]; then
             echo " OK"
         else
