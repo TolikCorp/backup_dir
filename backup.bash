@@ -60,8 +60,8 @@
         echo "[---] Ошибка: Каталог ${backup_source_location} отсутствует."
         exit 1
     fi
-    if [[ ! -d "${backup_source_location}" ]]; then
-        echo "[---] Ошибка: Каталог ${backup_source_location} отсутствует."
+    if [[ ! -d "${backup_target_location}" ]]; then
+        echo "[---] Ошибка: Каталог ${backup_target_location} отсутствует."
         exit 1
     fi
     cd ${backup_source_location}
